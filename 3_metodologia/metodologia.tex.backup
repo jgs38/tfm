@@ -1,0 +1,37 @@
+\section{Metodología}\label{sec:3_metodologia}
+
+\subsection{Etapas para la fabricación de los chips}
+
+El proceso de microfabricación que se ha llevado a cabo en este trabajo comienza partiendo de un diseño de chip impreso sobre una oblea de silicio monocristalino que denominamos wafer.
+
+Con el objetivo de mantener el entorno lo mas limpio posible durante el proceso de microfabricación, se ha utilizado un traje de aislamiento con capucha, guantes y una careta protectora. Además, siempre que ha sido posible, se ha trabajado en una campana de flujo laminar con un filtro micommm.
+
+De forma esquemática pasos que se han seguido son los siguientes:
+
+\begin{description}
+ \item Se mezcla PDMS con curante en una proporción 10 a 1. En nuestro caso, debido al tamaño de nuestro wafer y el grosor que pretendiamos conseguir en nuestro chip (entorno a 0.5 mm) las cantidades exactas fueron 45 de PDMS y 4.5 de curante. Este proceso debe llevarse a cabo en unas condiciones de baja iluminación porque el curante es sensible a la luz. Es muy importante remover la mezcla con cuidado para evitar la formación de burbujas, pero siempre asegurándonos que la mezcla entre los componentes se está realizando correctamente.
+ 
+ \item Inevitablemente el PDMS tiene gases disueltos que podrían. Para eliminar el gas disuelto y las burbujas que se han podido formar durante el proceso anterior, se introduce la mezcla en una cámara de vacío. La mezcla permanece ahí unos 20 min una vez ha alcanzado una presión de unos 50 mbar.
+ 
+ \item Se vierte la mezcla sobre el wafer. Para evitar que el wafer se quede pegado a la placa de vidrio que lo contiene, se coloca sobre la placa una lámina de papel de aluminio y el wafer sobre esta dejando un borde sobresaliendo para poder sacarlo con facilidad. De nuevo, el wafer con el PDMS vuelve a la cámara de vacío y esta vez permanece durante unos 30 - 60 min una vez que se ha alcanzado una presión de unos 50 mbar.
+ 
+ \item La placa se introduce en la estufa a unos 65 C durante unas 3 h (4 h según) para que se endurezca. Estos son valores orientativos. El PDMS se vuelve mas quebradizo cuanto mas tiempo pasa en la estufa, lo que no es conveniente para hacer los agujeros sobre el chip.
+ 
+ \item Tirando del papel de aluminio se desmolda el conjunto papel de aluminio - wafer - PDMS. Se retira el papel de aluminio y con ayuda de un bisturí se retira el PDMS que rodea el wafer. La oblea de silicio es muy dura pero quebradiza. Este paso hay que ejecutarlo con sumo cuidado y hay que tomarse el tiempo necesario para evitar que la oblea se parta.
+ 
+ \item En cada oblea se encuentran grabados 12 chips, 6 de los cuales tienen la misma forma y otros 6 otra. Con un bisturí se separan los chips de forma individual. Una vez separados hacen los agujeros con un punzón y se limpian con isopropanol y se secan con aire a presión cecionandonos que quedan completamente limpios.
+ 
+ \item Se procede al pegado de los chips con los portaobjetos. Los chips de PDMS solo tienen un pequeño surco grabado por una de sus caras. Para poder trabajar con ellos debemos unirlos con otra superficie lisa y que el canal forme un tubo. El proceso de unión requiere la formación de grupos O-H sobre la superficie del chip y del portaobjetos, para que una vez entren en contacto ambas superficies estas queden unidas covalentemente.
+ 
+ Este proceso para la preparación de las superficies consta de dos pasos. En primer lugar se requiere limpiar la superficie de los cubreobjetos con acetona-isopropanol-agua destilada- isopropanol siguiendo este orden. El segundo paso consiste en introducir el chip y el portaobjetos en una cámara de plásma colocando las superficies que se van a unir completamente expuestas al plásma.
+ 
+ \item Los chips vuelven a la estufa y permanecen ahí un tiempo indefinido dejando que el PDMS termine de endurecerse, para posteriormente guardarlos.
+ 
+\end{description}
+
+
+\subsection{Dispositivo experimental}
+
+El dispositivo experimental se ha montado intentando reducir los volumenes de los tubos, las diferencias de presión entre los componentes
+
+\subsection{Análisis de los datos}

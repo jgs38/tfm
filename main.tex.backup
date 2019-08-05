@@ -1,0 +1,163 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+
+%   Castellano
+\usepackage[spanish,english,activeacute]{babel}
+\decimalpoint
+\usepackage{boxedminipage}
+
+%lorem
+\usepackage{lipsum}
+
+%   Matemáticas
+\usepackage{ucs}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage[margin=4cm]{geometry}
+\usepackage{resizegather} %Para ecuaciones muy largas
+
+%Import the natbib package and sets a bibliography  and citation styles
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+% \bibliographystyle{plain}
+\setcitestyle{authoryear}
+% \setcitestyle{authoryear,open={((},close={))}}
+\usepackage{enumerate}
+\usepackage{ftnxtra}
+
+%footnote pegado a la zona inferior de la pagina
+\usepackage[bottom]{footmisc}
+
+%   Figuras
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.bmp,.pdf,.png,.jpg,.gif,.jpeg}
+\usepackage[mathscr]{eucal}
+\usepackage[nottoc]{tocbibind}
+\usepackage[colorlinks,urlcolor=blue,citecolor=blue,linkcolor=blue,filecolor=blue]{hyperref}
+\usepackage{subfig}
+
+%   Tablas
+%\usepackage{colortbl}% color
+\usepackage{lscape}% vertical
+% \usepackage{multirow}
+
+% Tablas avanzadas
+\usepackage{fancyhdr}
+\markboth{izquierdo}{derecho}
+\usepackage{pgfplotstable,array,booktabs}
+
+% %   Programación
+% \usepackage{minted}
+% 
+% \newmintedfile[mybash]{bash}{
+%     linenos,
+%     numbersep=4pt,
+%     gobble=0,
+%     frame=lines,
+%     framesep=2mm,
+% }
+% 
+% \newmintedfile[mypython]{python}{
+%     linenos,
+%     numbersep=5pt,
+%     gobble=0,
+%     frame=lines,
+%     framesep=2mm,
+% }
+
+%%%%
+%Arbol directorios
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
+\usepackage{xcolor}
+\tikzstyle{every node}=[thick,anchor=west, rounded corners, font={\scriptsize\ttfamily}, inner sep=2.5pt]
+\tikzstyle{selected}=[draw=blue,fill=blue!10]
+\tikzstyle{root}=[selected, fill=blue!30]
+%%%%
+
+
+% Cambiar formato de una sola pagina
+\usepackage{geometry}
+
+%   Para introducir páginas en blanco
+\usepackage{afterpage}
+
+\usepackage[toc,page]{appendix}
+
+%   formato del documento
+\include{formato_documento}
+
+%   Comandos definidos por el usuario
+\include{newcomand}
+
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definición}[section]
+
+\renewcommand{\appendixname}{Anexos}
+\renewcommand{\appendixtocname}{Anexos}
+\renewcommand{\appendixpagename}{Anexos}
+
+%Ha eliminado un error pero no se porqué
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+
+\begin{document}
+
+\include{00_portada/portada}
+
+% \newpage
+% $\ $
+% \thispagestyle{empty} % para que no se numere esta pagina
+
+% \include{04_Dedicatoria/dedicatoria}
+
+\newpage
+$\ $
+\thispagestyle{empty} % para que no se numere esta pagina
+
+\selectlanguage{spanish}
+
+% \include{02_Agradecimientos/agradecimientos}
+
+\newpage
+$\ $
+\thispagestyle{empty} % para que no se numere esta pagina
+
+\include{01_indice/indice}
+
+% \newpage
+% $\ $
+% \thispagestyle{empty} % para que no se numere esta pagina
+
+\include{03_abstract/abstract}
+
+\newpage
+$\ $
+\thispagestyle{empty} % para que no se numere esta pagina
+
+\selectlanguage{spanish}
+
+\include{1_antecedentes/antecedentes}
+
+\include{2_objetivos/objetivos}
+
+\include{3_metodologia/metodologia}
+
+\include{4_resultados/resultados}
+
+\include{5_discusion/discusion}
+
+\include{6_conclusiones/conclusiones}
+
+%   Bibliografia
+%Imports the bibliography file "references.bib"
+\bibliography{references}
+
+
+\end{document}

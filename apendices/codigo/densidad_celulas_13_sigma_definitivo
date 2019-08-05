@@ -1,0 +1,405 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: Javier Gutiérrez Solórzano
+
+"""
+
+#%% Paquetes importados:
+
+import datetime
+
+import numpy as np
+
+from scipy.special import factorial
+
+from astropy.visualization import hist as hist_astropy
+
+import matplotlib.pyplot as plt
+
+from scipy.optimize import curve_fit
+
+from math import log10, floor
+
+#   Soporte de unidades físicas.
+from astropy import units as u   
+
+#%% Delcaración de funciones
+
+def vol_droplets(vol_droplet,vol_muestra,sigma_droplet):
+    """
+    Función encargada de definir el tamaño de las microgotas.
+    """
+    
+    vol_acumulado=0
+    volumenes_droplets=[]
+    vol_droplet_i=vol_droplet
+    
+    while (vol_acumulado<vol_muestra):
+        # En este caso el tamaño de las microgotas sigue una distribución 
+      # normal.
+        vol_droplet_i=np.random.normal(vol_droplet,sigma_droplet)
+        volumenes_droplets.append(vol_droplet_i)
+        vol_acumulado=vol_acumulado+vol_droplet_i
+
+    return volumenes_droplets
+
+
+def encapsulados(vol_muestra, vol_droplet, distribucion_muestra,sigma_droplet):
+    """
+    Función encargada de realizar los recuentos. Cuenta el número de
+    células que ha quedado atrapado dentro de cada gota.
+    """
+    
+    distribucion_muestra.sort()
+    pos_cel_siguiente_droplet=0
+    vol_final=0
+    droplets=[]
+    
+    volumenes_droplets=vol_droplets(vol_droplet,vol_muestra,sigma_droplet)
+    
+    for e in range(0,len(volumenes_droplets),1):
+        droplet=[]
+        vol_final=vol_final+volumenes_droplets[e]
+        for i in range(pos_cel_siguiente_droplet,n_celulas,1):
+            if (distribucion_muestra[i]<vol_final):
+                droplet.append(distribucion_muestra[i])
+            else:
+                pos_cel_siguiente_droplet=i
+                break
+                
+        droplets.append(droplet)
+    
+    return droplets, volumenes_droplets
+
+     
+def round_sig(x, sig=2):
+    """
+    Redondea a la cifra significativa sig.
+    """
+    return round(x, sig-int(floor(log10(abs(x))))-1)
+
+
+def vol_esfera_radio(r):
+    return (4/3)*(np.pi)*(r**3)
+
+
+def vol_esfera_diametro(d):
+    return (1/6)*(np.pi)*(d**3)
+
+
+def simulacion(n_celulas,vol_droplet,vol_muestra):
+    """
+    Realiza las simulaciones. Genera los números aleatorios y hace una
+    llamada a las función 'encapsulados'.
+    """
+    distribucion_muestra=[] # len(distribucion_muestra)=n_celulas.
+
+    # Generamos una distribución de puntos estadísticamente uniforme.
+    for i in range(0,n_celulas,1):
+        distribucion_muestra.append(np.random.uniform(0,vol_muestra))
+    
+    # En el caso de que consideremos como afecta que las droplets tengan una 
+  # distribución de tamaños (en este caso gausiana):
+    [droplets,volumenes_droplets]=encapsulados(vol_muestra, vol_droplet
+    , distribucion_muestra,sigma_droplet)
+      
+    # Recuento del número de "celulas" en cada droplet.
+    n_encapsulamientos=[]
+    for i in range(0,len(droplets),1):
+        n_encapsulamientos.append(len(droplets[i]))
+    
+    
+    # Número de encapsulados que se han producido. Se realiza un conteo de que 
+  # elementos se encuentran en el array (elementos) y que número de veces se 
+  # han repetido (repeticiones).
+    [elementos,repeticiones]=np.unique(n_encapsulamientos,return_counts = True)
+    
+    return elementos, repeticiones, droplets, n_encapsulamientos
+
+
+def mayor_elemento_array_arrays(array_arrays):
+    """
+    Busca el mayor número contenido en todos los arrays "elementos"
+    """
+    maximos=[]
+    for y in range(0,len(array_elementos),1):
+        maximos.append(max(array_elementos[y]))
+    
+    return max(maximos)
+        
+
+def busca_elemento(lista, elemento):
+    """
+    Busca 'elemento' en 'lista' y devuelve su posición en 'lista'
+    """
+    for i in range(0,len(lista)):
+        if(lista[i] == elemento):
+            return i
+        
+
+def aa(elementos,repeticiones,max_elementos):
+    """
+    Los elemento de repeticiones hay que colocarlo en el lugar
+    elementos(n). Si n no se encuentra en el array "elementos" hay que
+    ponder un 0 en su lugar.
+    
+    Ejemplo de funcionamiento de la función.
+    Entrada:
+        elementos=[1,2,3,4,6,10]
+        repeticiones=[5,25,81,42,10,2]
+        max_elementos=11
+    
+    Salida:
+        nuevo_elementos=[ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        nuevo_repeticiones=[0, 5, 25, 81, 42, 0, 10, 0, 0, 0, 2, 0]
+    """
+    
+    nuevo_elementos=np.array(range(0,max_elementos+1))
+    nuevo_repeticiones=[]
+    for q in range(0,len(nuevo_elementos),1):
+        i=busca_elemento(elementos,q) #Busco el elemento que ocupa la posición 
+    # 'q' en el array elementos.
+        if i==None: # Extrictamente debe ser 0 (en ocasiones se producen 
+    # divisiones por 0, pudiendose evitar poniendo 1, lo cual no modifica
+    # significativamente los resultados).
+            nuevo_repeticiones.append(0)
+        else: # Si está, añado el elemento al array "nuevo_repeticiones" en la 
+            # posición i.
+            nuevo_repeticiones.append(repeticiones[i])
+    
+    return nuevo_elementos,nuevo_repeticiones
+        
+
+def c(array_elementos,array_repeticiones):
+    """
+    Junto con la función 'aa' se encarga de reordenar los arrays para
+    poder analizar adecuadamente los datos procedentes de las
+    simulaciones.
+    """
+    max_array_elementos=mayor_elemento_array_arrays(array_elementos)
+    nuevo_array_elementos=[]
+    nuevo_array_repeticiones=[]
+    for w in range(0,len(array_elementos),1):
+        [nuevo_array_elemento,nuevo_array_repeticion]=aa(array_elementos[w]
+        ,array_repeticiones[w],max_array_elementos)
+        
+        nuevo_array_elementos.append(nuevo_array_elemento)
+        nuevo_array_repeticiones.append(nuevo_array_repeticion)
+        
+    return np.array(nuevo_array_elementos),np.array(nuevo_array_repeticiones)
+
+#from scipy.special import factorial
+
+#Distribución de poisson
+def poisson_distribution(k, lamb, scale):
+    return scale*(lamb**k/factorial(k)) * np.exp(-lamb)
+
+#%%
+#    #  Ruta Linux
+outroute = '/home/usuario'
+
+#%% Caracterización de las muestras que queremos simular.
+
+# Input ----------------------------------------------------------
+        
+# Unidades: 1mm3=1microlitro => 1000 mm3=1ml
+
+random_seed=7
+np.random.seed(random_seed)
+
+# Volumen de la muestra (fase dispersa):
+vol_muestra=400*u.mm**3
+vol_muestra.to(u.mm**3)
+
+# Densidad de células en la muestra
+rho_celulas=23.375*u.mm**(-3) #1536
+rho_celulas.to(u.mm**-3)
+
+# Diámetro de las droplets:
+diametro_droplet=200*u.micron
+
+# Número de veces que se va a repetir la simulación.
+n_simulaciones=4
+
+flujo_dispersa=3*(u.mm**3*u.min**-1)
+
+# Desvación estándar en el tamaño de las droplets (tanto por 1).
+sigma_porcentaje=0 
+
+# Output ----------------------------------------------------------
+
+# Volumen de la droplet a partir de su diámetro.
+vol_droplet=vol_esfera_diametro(diametro_droplet)
+vol_droplet.to(u.mm**3)
+
+# Redondea al número de células entero más próximo.
+n_celulas=int(round((vol_muestra.value)*(rho_celulas.value)))
+
+# Duración del experimento (en minutos).
+duracion_experimento=vol_muestra.to(u.mm**3)/(
+        flujo_dispersa.to(u.mm**3*u.min**-1))
+
+# Tasa de formación de droplets.
+tasa_formacion=flujo_dispersa.to(u.mm**3*u.s**-1)/vol_droplet.to(u.mm**3) 
+
+print('Random seed = ',random_seed,'\nρ = ',rho_celulas
+      ,'\nVolumen de la muestra: ',vol_muestra,'\nDiámetro droplet: '
+      ,diametro_droplet,'\nFlujo fase dispersa: '
+      ,flujo_dispersa.to(u.mm**3*u.min**-1),'\nNúmero de simulaciones: '
+      ,n_simulaciones
+      ,'\nDesviación estándar relativo al tamaño de la droplet expresado como'
+      ,'tanto por 1:',sigma_porcentaje,'\n\nVolumen droplet: '
+      ,vol_droplet.to(u.mm**3),'\nDuración experimento: '
+      ,duracion_experimento,'\nTasa de formación: ',tasa_formacion,'\n')
+
+# No queremos que las cantidades tengan dimensiones para hacer los calculos.
+vol_muestra=(vol_muestra.to(u.mm**3)).value
+vol_droplet=(vol_droplet.to(u.mm**3)).value
+rho_celulas=(rho_celulas.to(u.mm**-3)).value
+sigma_droplet=sigma_porcentaje*vol_droplet
+
+#%% Simula la encapsulación de varias muestras.
+
+# Tiempo de referencia para medir el tiempo que duran las simulaciones.
+a=datetime.datetime.now()
+
+# Cabecera de los datos que se mostrarán posteriormente en pantalla.
+print('\n\nSimulación | Tiempo transcurrido | elementos | repeticiones | n-droplets')
+
+# Array que contiene los arrays "elementos" generado en cada simulación.
+array_elementos=[]
+# Array que contiene los arrays "repeticiones ".
+array_repeticiones=[] 
+# Array que contiene los arrays "droplets".
+array_droplets=[]
+# Array que contiene los arrays "n_encapsulamientos".
+array_n_encapsulamientos=[]
+
+# Comienzan las "simulaciones".
+for n in range(0,n_simulaciones,1):
+    
+    # Encapsulado de 1 muestra.
+    [elementos,repeticiones,droplets
+     ,n_encapsulamientos]=simulacion(n_celulas,vol_droplet,vol_muestra)
+    
+    # Guardamos los valores que se han obtenido de cada simulación.
+    array_elementos.append(elementos)
+    array_repeticiones.append(repeticiones)
+    array_droplets.append(droplets)
+    array_n_encapsulamientos.append(n_encapsulamientos)
+    
+    # Tiempo en que se termina de realizar la n-ésima simulación.
+    t=datetime.datetime.now()
+    
+    # Muestra valores en la pantalla para poder ver el avance del programa.
+    print(n+1,'. ',t-a, elementos, repeticiones, len(droplets))
+
+#%% Estudio de los resultados de las simulaciones.
+
+# Reordena los arrays de entrada para poder hacer las medias correctamente.
+[nuevo_array_elementos,nuevo_array_repeticiones]=c(array_elementos
+                                                           ,array_repeticiones)
+
+# Obtiene una matriz de enteros a partir de "arrays nuevo_array_repeticiones".
+matriz_nuevo_array_repeticiones=nuevo_array_repeticiones.astype(int)
+
+# Obtenemos la media y la desviación estándar.
+medias=[] 
+std_medias=[]
+for k in range(1,len(max(nuevo_array_elementos,key = lambda x: len(x)))+1,1):
+    # Medias de la columna k de la matriz "matriz_nuevo_array_repeticiones".
+    medias.append(np.mean(matriz_nuevo_array_repeticiones[:,k-1:k])) 
+    # Desviación estándar de la columna k de la matriz.
+    std_medias.append(np.std(matriz_nuevo_array_repeticiones[:,k-1:k])) 
+
+# Transforma la lista en array.  
+medias=np.array(medias)
+std_medias=np.array(std_medias)
+
+# Cabecera de los datos que se mostrarán posteriormente en pantalla. 
+print('\n\nA partir de las simulaciones anteriores:\nCélulas/droplet',
+      ' | Promedio de n-droplets ± desviación estándar')
+# Imprime los valores enteros de los arrays medias y std_medias.
+for s in range(0,len(max(nuevo_array_repeticiones,key = lambda x: len(x))),1):
+    # Redondea los valores contenidos en el array al entero más próximo. 
+    print(' ',s,' ',medias.astype(int)[s],'±',std_medias.astype(int)[s])
+
+#%%
+porcentaje=[]
+encapsulados_totales=0
+
+for p in range(1,len(medias)-1,1):
+    encapsulados_totales=encapsulados_totales+medias[p]
+    
+encapsulados_unicos=medias[1]
+encapsulados_multiples=encapsulados_totales-encapsulados_unicos
+
+print('\n\nEl número de encapsulados múltiples representa el '
+      ,(encapsulados_multiples/encapsulados_unicos)*100
+      ,'% de los encapsulados únicos.')
+
+print('\nEl número de encapsulados múltiples representa el'
+      ,(encapsulados_multiples/encapsulados_totales)*100
+      ,'% de los encapsulados totales',
+      '. Nuestro objetivo es que se encuentre en el 5%.')
+ 
+# Porcentajes relativos al total de la muestra.
+for p in range(0,len(medias),1):
+    porcentaje.append(medias[p]/len(droplets)*100)
+    
+print('\nPorcentaje que representa cada conjunto de droplets con distinto ',
+      'número de encapsulados respecto del total de la muestra:\n',porcentaje)
+
+
+#%% Representación gráfica de los datos para entenderlos mejor.
+
+# Valores x para los puntos con los que se realiza el ajuste.
+x_medias=np.array(range(0, len(medias)))
+
+# Ajuste a la distribución de Poisson.
+[parameters, cov_matrix]= curve_fit(poisson_distribution,x_medias, medias)
+
+# Valores del eje x para el plot de la curva de ajuste.
+X = np.linspace(0, len(nuevo_array_elementos[0]), 100)
+
+# Gráfica ----------------------------------------------------------
+
+figura=plt.figure(num = None, figsize = (9, 6), dpi = 80, facecolor = 'w'
+                  , edgecolor = 'k')
+
+# Histograma de la distribución que muestra cuantas "droplets" contienen tantas
+# "celulas". El histograma se corresponde a la solución de la primera 
+# simulación.   
+hist_astropy(array_n_encapsulamientos[0], bins=len(medias), density=False,
+             alpha=0.6,color='#9e9d24')
+
+# Etiqueta para cada eje.             
+plt.xlabel('$\mathrm{N_{celulas}}$', fontsize = 16)
+plt.ylabel('$\mathrm{N_{droplets}}$', fontsize = 16)
+
+# Puntos obtenidos a partir de la media de todas las simulaciones.
+plt.scatter(x_medias,medias, color='red',s=10)
+
+# Valor de lambda del ajuste en la figura con dos cifras 3 cifras.
+etiqueta='$\lambda$ ='+str(round_sig(parameters[0], sig=4))
+# Curva de ajuste de la distribución de poisson
+plt.plot(X, poisson_distribution(X, *parameters), 'r-',color="blue",
+         linewidth=1,label=etiqueta)
+
+# Posición de la leyenda en figura.
+plt.legend(loc='best')
+
+# Rejilla de fondo.
+plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+         
+# Ajusta los ejes de la gráfica.       
+plt.axis([0,len(nuevo_array_elementos[0]),0,1.07*max(poisson_distribution(X,
+          *parameters))]) 
+         
+# Guarda la figura.
+figura.savefig(outroute + 'histograma10_'+str(random_seed
++'_'+str(rho_celulas)'_'+str(vol_muestra)+'_'+str(diametro_droplet.value)+'_'
++str(flujo_dispersa.value)+'_'+str(sigma_porcentaje)
++'.png', dpi=150, transparent=True)

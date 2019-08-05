@@ -1,0 +1,1 @@
+    >>> print(nombre_funcion.__doc__)
